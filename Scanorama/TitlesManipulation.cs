@@ -9,10 +9,12 @@ namespace Scanorama
 {
     class TitlesManipulation
     {
-        public static SortedDictionary<string, float> readTitlesFromFile(string fileName)
+        public static List<KeyValuePair<string, float>> readTitlesFromFile(string fileName)
         {
             System.Console.WriteLine("Reading the titles from the file {0}...", fileName);
-            SortedDictionary<string, float> titles = new SortedDictionary<string, float>();
+            //SortedDictionary<string, float> titles = new SortedDictionary<string, float>();
+            List<KeyValuePair<string, float>> list = new List<KeyValuePair<string, float>>();
+
             //string title = System.IO.File.ReadAllText(fileName);
             string[] lines = System.IO.File.ReadAllLines(fileName);
 
@@ -20,15 +22,21 @@ namespace Scanorama
             float emptyDuration = 0;
             string text = "";//accumulating texts
             string timecode = "00:00:00,00";
+
+            //put file lines into the dictionary
             foreach (string line in lines)
             {
                 if (line == "")
                 {
-                    titles.Add("", emptyDuration);
-                    titles.Add(text, duration);
+                    //add for the empty slide to show no titles
+                    //titles.Add("", emptyDuration);
+                    list.Add(new KeyValuePair<string, float>("", emptyDuration));
+                    //add for the slide with the titles
+                    //titles.Add(text, duration);
+                    list.Add(new KeyValuePair<string, float>(text.Trim(), duration));
                     text = "";
                 }
-                else if (line.Contains(">"))
+                else if (Regex.IsMatch(line, @"[0-9]>[0-9]"))
                 {
                     string[] timecodes = line.Replace('|', '\u0020').Trim().Split('>');
                     duration =calculateDuration(timecodes[0], timecodes[1]);
@@ -40,13 +48,19 @@ namespace Scanorama
                 {
                     text = text + line.Trim() + "\n";
                 }
-          
+
                 //Console.WriteLine("\t" + line);
                 //Console.WriteLine("Press any key to exit.");
                 //System.Console.ReadKey();
             }
+            //adding the last title
+            if (text.Length > 0)
+            {
+                list.Add(new KeyValuePair<string, float>("", emptyDuration));
+                list.Add(new KeyValuePair<string, float>(text.Trim(), duration));
+            }
             //System.Console.WriteLine("The content is {0}", titles[1]);
-            return titles;
+            return list;
         }
 
         public static float calculateDuration(string start, string finish) {
@@ -62,5 +76,13 @@ namespace Scanorama
             return seconds;
         }
 
+        public static void printChars(string text)
+        {
+            char[] myChars = text.ToCharArray();
+            foreach (char ch in myChars)
+            {
+                Console.Write(ch + @" - \u" + ((int)ch).ToString("X4") + ", ");
+            }
+        }
     }
 }

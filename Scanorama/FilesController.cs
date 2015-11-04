@@ -12,11 +12,12 @@ namespace Scanorama
         //open the titles file using the dialog
         public static string openFile()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string fileName = path + "\\MyTitles.txt";
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string filePath = desktopPath + "\\MyTitles.txt";
 
             //Browse Files
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.InitialDirectory = desktopPath + "\\Scano";
             dlg.DefaultExt = ".txt";
             dlg.Filter = "TXT Files (*.txt)|*.txt|SRT Files (*.srt)|*.srt|DOC Files (*.doc)|*.doc|RTF Files (*.rtf)|*.rtf";
             Nullable<bool> result = dlg.ShowDialog();
@@ -24,24 +25,30 @@ namespace Scanorama
             if (result == true)
             {
                 // Open document 
-                fileName = dlg.FileName;
+                filePath = dlg.FileName;
                 //textBox1.Text = filename;
             }
             else
             {
                 System.Console.WriteLine("Couldn't show the dialog.");
             }
-            return fileName;
+            return filePath;
         }
 
         public static void saveSlides(Microsoft.Office.Interop.PowerPoint.Presentation presentation)
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             //string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string fileName = path + "\\Slides.pptx";
+            string filePath = desktopPath + "\\Slides.pptx";
+
+
+            // Microsoft.Office.Interop.PowerPoint.FileConverter fc = new Microsoft.Office.Interop.PowerPoint.FileConverter();
+            // if (fc.CanSave) { }
+            //https://msdn.microsoft.com/en-us/library/system.windows.forms.savefiledialog(v=vs.110).aspx
 
             //Browse Files
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.InitialDirectory = desktopPath+"\\Scano";
             dlg.DefaultExt = ".pptx";
             dlg.Filter = "PPTX Files (*.pptx)|*.pptx";
             Nullable<bool> result = dlg.ShowDialog();
@@ -49,7 +56,7 @@ namespace Scanorama
             if (result == true)
             {
                 // Open document 
-                fileName = dlg.FileName;
+                filePath = dlg.FileName;
                 //textBox1.Text = filename;
             }
             else
@@ -57,10 +64,10 @@ namespace Scanorama
                 System.Console.WriteLine("Couldn't show the dialog.");
             }
 
-            presentation.SaveAs(fileName,
+            presentation.SaveAs(filePath,
             Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType.ppSaveAsOpenXMLPresentation,
             Microsoft.Office.Core.MsoTriState.msoTriStateMixed);
-            System.Console.WriteLine("PowerPoint application saved in {0}.", fileName);
+            System.Console.WriteLine("PowerPoint application saved in {0}.", filePath);
         }
 
     }

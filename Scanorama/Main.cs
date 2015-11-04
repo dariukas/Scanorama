@@ -13,11 +13,13 @@ namespace Scanorama
         public static void Run()
         {
             Prepare();
+            Environment.Exit(0);
         }
 
         public static void Prepare()
         {
             SlidesManipulation.createPresentation(TitlesManipulation.readTitlesFromFile(FilesController.openFile()));
+            //MainSpeech.Run();
         }
     }
 }
