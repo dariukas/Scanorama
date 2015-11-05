@@ -91,8 +91,9 @@ namespace Scanorama
             Microsoft.Office.Interop.PowerPoint.TextFrame oTxtFrame = oShape.TextFrame;
             
             TextRange oTxtRange = oTxtFrame.TextRange;
-            slideText = setItalic(slideText, oTxtRange);
+            
             oTxtRange.Text = slideText;
+            oTxtRange = setItalic(oTxtRange);
 
             oTxtRange.Font.Size = 44;
             oTxtRange.Font.Name = "Arial";
@@ -113,51 +114,51 @@ namespace Scanorama
             }
         }
 
-        public static string setItalic(string slideText, TextRange textRange)
+        public static TextRange setItalic(TextRange textRange)
         {
-            if (slideText.Contains("<i"))
+            string text = textRange.Text;
+            if (text.Contains("<i"))
             {
-                Console.WriteLine("detected"+ textRange.Runs().Characters().Count);
-                /*List<string> texts= new List<string>();
-                string text = slideText;
-
-                while (text.Contains("<i>")) {
-                    int st = text.IndexOf("<i>") + 3;
-                    int ls = text.IndexOf("</i>", st);
-                    texts.Add(slideText.Substring(0, st));
-                    texts.Add(slideText.Substring(st, ls));
-                    text = text.Substring(ls + 4);
-                }
-
-                foreach (string s in texts) {
-                    textRange.Runs()
-                }*/
                MsoTriState state = MsoTriState.msoFalse;
                foreach (TextRange tr in textRange.Characters()) {
-                    if (tr.Text == ">") {
+                    tr.Font.Italic = state;
+                    if (tr.Text == ">")
+                    {
                         state = changeState(state);
-                        Console.WriteLine(state);
-                        tr.Font.Italic = state;
                     }
                 }
-                slideText = slideText.Replace("<i>", "");
-                slideText = slideText.Replace("</i>", "");
-                //textRange.Font.Italic = MsoTriState.msoTrue;
-            }
-            if (slideText.Contains("#"))
-            {
-                /*int c = 0;
-                for (int e = 0; e < s.Length; e++)
+
+                foreach (TextRange trr in textRange.Runs())
                 {
-                    if (slideText[e] == '#')
-                    {
-                        c++;
-                    }
-                }*/
-                slideText = slideText.Replace("#", "");
-                textRange.Font.Italic = MsoTriState.msoTrue;
+                    Console.WriteLine("RUN: "+trr.Text);
+                    trr.Text = trr.Text.Replace("<i>", "").Replace("</i>", "");
+                }
+                return textRange;
             }
-            return slideText;
+
+            if (text.Contains("#"))
+            {
+                MsoTriState state = MsoTriState.msoFalse;
+                foreach (TextRange tr in textRange.Characters())
+                {
+                    tr.Font.Italic = state;
+                    if (tr.Text == "#")
+                    {
+                        state = changeState(state);
+                        tr.Text = "";
+                    }
+                }
+                return textRange;
+            }
+            /* int c = 0;
+             for (int e = 0; e < s.Length; e++)
+             {
+                 if (slideText[e] == '#')
+                 {
+                     c++;
+                 }
+             }*/
+            return null;
         }
 
         public static MsoTriState changeState(MsoTriState state)
