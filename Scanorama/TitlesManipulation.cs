@@ -39,8 +39,10 @@ namespace Scanorama
                 else if (Regex.IsMatch(line, @"[0-9]>[0-9]"))
                 {
                     string[] timecodes = line.Replace('|', '\u0020').Trim().Split('>');
-                    duration =calculateDuration(timecodes[0], timecodes[1]);
-                    emptyDuration = calculateDuration(timecode, timecodes[0]);
+                    //duration =calculateDuration(timecodes[0], timecodes[1])*26/25;
+                   //emptyDuration = calculateDuration(timecode, timecodes[0])*26/25;
+                    duration = calculateDurationFromFrames(timecodes[0], timecodes[1])/24.0F;
+                    emptyDuration = calculateDurationFromFrames(timecode, timecodes[0])/24.0F;
                     timecode = timecodes[1];
                 }
                 else if (Regex.IsMatch(line, @"^\D"))
@@ -64,13 +66,31 @@ namespace Scanorama
         }
 
         public static float calculateDuration(string start, string finish) {
-               return Convert.ToSingle(timecodeToSeconds(finish) - timecodeToSeconds(start));
+             return Convert.ToSingle(timecodeToSeconds(finish) - timecodeToSeconds(start));
+        }
+
+        public static float calculateDurationFromFrames(string start, string finish)
+        {
+            return Convert.ToSingle(timecodeToFrames(finish) - timecodeToFrames(start));
+        }
+
+
+        public static int timecodeToFrames(string value)
+        {
+            //string value1 = "00:01:02,480";
+            value.Replace(',', '.');
+            string[]timecodeParts= value.Split(',');
+            TimeSpan span = TimeSpan.Parse(timecodeParts[0]);
+            double seconds = span.TotalSeconds;
+            int framesNumber = Convert.ToInt32(seconds*24) + int.Parse(timecodeParts[1]);
+            return framesNumber;
         }
 
         public static double timecodeToSeconds(string value)
         {
             //string value1 = "00:01:02,480";
             value.Replace(',', '.');
+
             TimeSpan span = TimeSpan.Parse(value);
             double seconds = span.TotalSeconds;
             return seconds;
