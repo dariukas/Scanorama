@@ -18,7 +18,7 @@ namespace Scanorama
 
         public static void Prepare()
         {
-            SlidesManipulation.createPresentation(TitlesManipulation.readTitlesFromFile(FilesController.openFile()));
+            SlidesManipulation.createPresentation(TitlesManipulation.readTitlesFromFile(FilesController.openFile(), 25.0F));
             //MainSpeech.Run();
         }
     }

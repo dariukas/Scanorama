@@ -105,14 +105,24 @@ namespace Scanorama
             //oTxtFrame.MarginTop = 10;
             //oShape.Top = 2;
             // }
+            addTimecodeToSlide(oSlide, advanceSec);
+        }
 
+        public static void addTimecodeToSlide(Slide oSlide, float advanceSec)
+        {
             //only if advanced not after 0 sec, it turns on, AdvanceOnClick is still true
             if (advanceSec != 0)
             {
                 oSlide.SlideShowTransition.AdvanceOnTime = MsoTriState.msoTrue;
-                oSlide.SlideShowTransition.AdvanceTime = advanceSec;
+                oSlide.SlideShowTransition.AdvanceTime = roundingCorrection(advanceSec);
                 //oSlide.SlideShowTransition.AdvanceOnClick = MsoTriState.msoTrue;
             }
+        }
+
+        public static float roundingCorrection(float f)
+        {
+            decimal d = Math.Round((decimal)f, 2, MidpointRounding.AwayFromZero);
+            return (float)d;
         }
 
         public static TextRange setItalic(TextRange textRange)

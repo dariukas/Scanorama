@@ -9,7 +9,7 @@ namespace Scanorama
 {
     class TitlesManipulation
     {
-        public static List<KeyValuePair<string, float>> readTitlesFromFile(string fileName)
+        public static List<KeyValuePair<string, float>> readTitlesFromFile(string fileName, float fps)
         {
             System.Console.WriteLine("Reading the titles from the file {0}...", fileName);
             //SortedDictionary<string, float> titles = new SortedDictionary<string, float>();
@@ -41,8 +41,8 @@ namespace Scanorama
                     string[] timecodes = line.Replace('|', '\u0020').Trim().Split('>');
                     //duration =calculateDuration(timecodes[0], timecodes[1])*26/25;
                    //emptyDuration = calculateDuration(timecode, timecodes[0])*26/25;
-                    duration = calculateDurationFromFrames(timecodes[0], timecodes[1])/24.0F;
-                    emptyDuration = calculateDurationFromFrames(timecode, timecodes[0])/24.0F;
+                    duration = calculateDurationFromFrames(timecodes[0], timecodes[1])/fps;
+                    emptyDuration = calculateDurationFromFrames(timecode, timecodes[0])/fps;
                     timecode = timecodes[1];
                 }
                 else if (Regex.IsMatch(line, @"^\D"))
